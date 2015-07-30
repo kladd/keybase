@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
+	"strconv"
 )
 
 const (
@@ -19,13 +20,21 @@ type status struct {
 }
 
 func encodeParams(params interface{}) string {
-	v := reflect.ValueOf(params).Type()
+	v := reflect.ValueOf(params)
 	vals := url.Values{}
+	var value string
 
 	for i := 0; i < v.NumField(); i++ {
+		switch v.Field(i).Type().Kind() {
+		case reflect.String:
+			value = v.Field(i).String()
+		case reflect.Int:
+			value = strconv.Itoa(int(v.Field(i).Int()))
+			fmt.Println(value)
+		}
 		vals.Set(
-			v.Field(i).Tag.Get("url"),
-			reflect.ValueOf(params).Field(i).String(),
+			v.Type().Field(i).Tag.Get("url"),
+			value,
 		)
 	}
 
@@ -33,7 +42,8 @@ func encodeParams(params interface{}) string {
 }
 
 func call(method string, params interface{}, resp interface{}) error {
-	res, err := http.Get(fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params)))
+	p := encodeParams(params)
+	res, err := http.Get(fmt.Sprintf("%s/%s.json?%s", kbURL, method, p))
 
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()

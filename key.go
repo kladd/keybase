@@ -18,3 +18,17 @@ type KeyFetchResponse struct {
 	Status status `json:"status"`
 	Keys   []Key  `json:"keys"`
 }
+
+// KeyFetchParams contains params for the key/fetch API endpoint
+type KeyFetchParams struct {
+	PGPKeyIDs string `url:"pgp_key_ids"`
+	Ops       int    `url:"ops"`
+}
+
+// KeyFetch fetches keys using the key/fetch.json API
+func KeyFetch(params KeyFetchParams) (*KeyFetchResponse, error) {
+	r := new(KeyFetchResponse)
+	err := call("key/fetch", params, r)
+
+	return r, err
+}
