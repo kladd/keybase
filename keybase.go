@@ -25,6 +25,11 @@ func encodeParams(params interface{}) string {
 	var value string
 
 	for i := 0; i < v.NumField(); i++ {
+		name := v.Type().Field(i).Tag.Get("url")
+		if name == "-" {
+			continue
+		}
+
 		switch v.Field(i).Type().Kind() {
 		case reflect.String:
 			value = v.Field(i).String()
@@ -32,19 +37,26 @@ func encodeParams(params interface{}) string {
 			value = strconv.Itoa(int(v.Field(i).Int()))
 			fmt.Println(value)
 		}
-		vals.Set(
-			v.Type().Field(i).Tag.Get("url"),
-			value,
-		)
+
+		vals.Set(name, value)
 	}
 
 	return vals.Encode()
 }
 
-func call(method string, params interface{}, resp interface{}) error {
-	p := encodeParams(params)
-	res, err := http.Get(fmt.Sprintf("%s/%s.json?%s", kbURL, method, p))
+func get(method string, params interface{}, resp interface{}) error {
+	res, err := http.Get(fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params)))
 
+	body, err := ioutil.ReadAll(res.Body)
+	defer res.Body.Close()
+
+	err = json.Unmarshal(body, resp)
+
+	return err
+}
+
+func post(method string, params url.Values, resp interface{}) error {
+	res, err := http.PostForm(fmt.Sprintf("%s/%s.json", kbURL, method), params)
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 
