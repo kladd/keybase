@@ -11,7 +11,12 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-// GetSaltResponse contains a response from a getsalt api call
+// GetSaltParams define parameters for calls to the getsalt API endpoint.
+type GetSaltParams struct {
+	Username string `url:"email_or_username"`
+}
+
+// GetSaltResponse defines a response to a getsalt request.
 type GetSaltResponse struct {
 	Status       status `json:"status"`
 	Salt         string `json:"salt"`
@@ -19,21 +24,15 @@ type GetSaltResponse struct {
 	LoginSession string `json:"login_session"`
 }
 
-// GetSaltParams contain parameters for get salt call
-type GetSaltParams struct {
-	Username string `url:"email_or_username"`
-}
-
-// GetSalt corresponds to the getsalt rpc
+// GetSalt calls the getsalt API endpoint.
 func GetSalt(params GetSaltParams) (GetSaltResponse, error) {
 	r := new(GetSaltResponse)
-
 	err := get("getsalt", params, r)
 
 	return *r, err
 }
 
-// LoginParams contain login api parameters
+// LoginParams defines a request for a call to the login API endpoint.
 type LoginParams struct {
 	Username     string          `url:"email_or_username"`
 	HmacPwh      string          `url:"hmac_pwh"`
@@ -42,14 +41,15 @@ type LoginParams struct {
 	Salt         GetSaltResponse `url:"-"`
 }
 
-// LoginResponse wraps a login response
+// LoginResponse defines a response to a login request.
 type LoginResponse struct {
 	Status  status `json:"status"`
 	Session string `json:"session"`
 	Me      string `json:"me"`
 }
 
-// Login encrypts password and transmits it to keybase
+// Login encrypts password using a salt created with GetSalt() and transmits it
+// to keybase in exchange for a session.
 func Login(l LoginParams, password []byte) (*LoginResponse, error) {
 	salt, err := hex.DecodeString(l.Salt.Salt)
 	ls, err := base64.StdEncoding.DecodeString(l.Salt.LoginSession)
