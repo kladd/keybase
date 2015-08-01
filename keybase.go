@@ -1,4 +1,4 @@
-// Package keybase provides an interface to the Keybase API.
+// Package keybase wraps the Keybase API.
 package keybase
 
 const (

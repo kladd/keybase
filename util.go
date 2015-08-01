@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func encodeParams(params interface{}) string {
@@ -16,7 +17,15 @@ func encodeParams(params interface{}) string {
 	var value string
 
 	for i := 0; i < v.NumField(); i++ {
-		name := v.Type().Field(i).Tag.Get("url")
+		tag := v.Type().Field(i).Tag.Get("url")
+		var name string
+		var opts string
+
+		if idx := strings.Index(tag, ","); idx != -1 {
+			name = tag[:idx]
+			opts = tag[idx+1:]
+		}
+
 		if name == "-" {
 			continue
 		}
@@ -29,6 +38,10 @@ func encodeParams(params interface{}) string {
 			fmt.Println(value)
 		}
 
+		if value == "" && strings.Contains(opts, "omitempty") {
+			continue
+		}
+
 		vals.Set(name, value)
 	}
 
@@ -36,6 +49,7 @@ func encodeParams(params interface{}) string {
 }
 
 func get(method string, params interface{}, resp interface{}) error {
+	fmt.Println(fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params)))
 	res, err := http.Get(fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params)))
 
 	body, err := ioutil.ReadAll(res.Body)
