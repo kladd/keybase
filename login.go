@@ -34,18 +34,18 @@ func GetSalt(params GetSaltParams) (GetSaltResponse, error) {
 
 // LoginParams defines a request for a call to the login API endpoint.
 type LoginParams struct {
-	Username     string          `url:"email_or_username"`
-	HmacPwh      string          `url:"hmac_pwh"`
-	LoginSession string          `url:"login_session"`
-	CsrfToken    string          `url:"csrf_token"`
-	Salt         GetSaltResponse `url:"-"`
+	Username     string
+	HmacPwh      string
+	LoginSession string
+	CsrfToken    string
+	Salt         GetSaltResponse
 }
 
 // LoginResponse defines a response to a login request.
 type LoginResponse struct {
 	Status  status `json:"status"`
 	Session string `json:"session"`
-	Me      string `json:"me"`
+	Me      User   `json:"me"`
 }
 
 // Login encrypts password using a salt created with GetSalt() and transmits it
