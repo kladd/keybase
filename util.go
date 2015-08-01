@@ -21,6 +21,7 @@ func encodeParams(params interface{}) string {
 		var name string
 		var opts string
 
+		name = tag
 		if idx := strings.Index(tag, ","); idx != -1 {
 			name = tag[:idx]
 			opts = tag[idx+1:]
