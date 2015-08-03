@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -49,10 +50,32 @@ func encodeParams(params interface{}) string {
 	return vals.Encode()
 }
 
-func get(method string, params interface{}, resp interface{}) error {
-	fmt.Println(fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params)))
-	res, err := http.Get(fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params)))
+func client(urlStr string) *http.Client {
+	client := new(http.Client)
 
+	if session != "" {
+		jar, _ := cookiejar.New(nil)
+		u, _ := url.Parse(urlStr)
+
+		jar.SetCookies(
+			u,
+			append(
+				[]*http.Cookie(nil),
+				&http.Cookie{
+					Name:  "session",
+					Value: session,
+				},
+			),
+		)
+	}
+
+	return client
+}
+
+func get(method string, params interface{}, resp interface{}) error {
+	urlStr := fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params))
+
+	res, err := client(urlStr).Get(urlStr)
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 
@@ -62,7 +85,9 @@ func get(method string, params interface{}, resp interface{}) error {
 }
 
 func post(method string, params url.Values, resp interface{}) error {
-	res, err := http.PostForm(fmt.Sprintf("%s/%s.json", kbURL, method), params)
+	urlStr := fmt.Sprintf("%s/%s.json", kbURL, method)
+
+	res, err := client(urlStr).PostForm(urlStr, params)
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 

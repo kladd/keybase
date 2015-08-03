@@ -67,5 +67,7 @@ func Login(l LoginParams, password []byte) (*LoginResponse, error) {
 	r := new(LoginResponse)
 	post("login", v, r)
 
+	session = r.Session
+
 	return r, err
 }

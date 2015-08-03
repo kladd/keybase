@@ -13,6 +13,10 @@ const (
 	OpSign    = 0x8
 )
 
+var (
+	session string
+)
+
 type status struct {
 	Code int    `json:"code"`
 	Name string `json:"name"`
