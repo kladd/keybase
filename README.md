@@ -8,6 +8,8 @@ The Keybase API documentation is available [on their website](https://keybase.io
 
 ## Example
 
+> Note: the Login flow/usage will be changing soon. Currently the Keybase session is stored package-wide as a side effect of calling Login() successfully.
+
 ```go
 
 var username string = "some_username"
@@ -39,8 +41,6 @@ func main() {
 }
 
 ```
-
-> Note: the Login flow/usage will be changing soon. Currently the Keybase session is stored package-wide as a side effect of calling Login() successfully.
 
 ## Methods implemented so far
 
