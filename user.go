@@ -82,67 +82,53 @@ func UserDiscover(params UserDiscoverParams) (*UserDiscoverResponse, error) {
 // User is what the Keybase API defines as a "User Object".
 // Documentation is available at https://keybase.io/docs/api/1.0/user_objects.
 type User struct {
-	ID                    string                  `json:"id"`
-	Basics                basics                  `json:"basics"`
-	InvitationStats       invitationStats         `json:"invitation_stats"`
-	Profile               profile                 `json:"profile"`
-	Emails                emails                  `json:"emails"`
-	PublicKeys            publicKeys              `json:"public_keys"`
-	PrivateKeys           privateKeys             `json:"private_keys"`
-	CryptoCurrencyAddress cryptoCurrencyAddresses `json:"cryptocurrency_addresses"`
-}
-
-type basics struct {
-	Ctime    int    `json:"ctime"`
-	Mtime    int    `json:"mtime"`
-	Salt     string `json:"salt"`
-	UID      string `json:"uid"`
-	Username string `json:"username"`
-}
-
-type invitationStats struct {
-	Available int `json:"available"`
-	Open      int `json:"open"`
-	Power     int `json:"power"`
-	Used      int `json:"used"`
-}
-
-type profile struct {
-	Bio      string `json:"bio"`
-	FullName string `json:"full_name"`
-	Location string `json:"location"`
-	Mtime    int    `json:"mtime"`
-}
-
-type emails struct {
-	Primary struct {
-		Email      string `json:"email"`
-		IsVerified int    `json:"is_verified"`
-	} `json:"primary"`
-}
-
-type publicKeys struct {
-	Primary struct {
-		KeyFingerprint string `json:"key_fingerprint"`
-		KID            string `json:"kid"`
-		KeyType        int    `json:"key_type"`
-		Bundle         string `json:"bundle"`
-		Ctime          int    `json:"ctime"`
-		Mtime          int    `json:"mtime"`
-	} `json:"primary"`
-}
-
-type privateKeys struct {
-	Bundle  string `json:"bundle"`
-	KeyType int    `json:"key_type"`
-	KID     string `json:"kid"`
-	Ctime   int    `json:"ctime"`
-	Mtime   int    `json:"mtime"`
-}
-
-type cryptoCurrencyAddresses struct {
-	Bitcoin struct {
-		Address string `json:"address"`
-		SigID   string `json:"sig_id"`
-	} `json:"bitcoin"`
+	ID     string `json:"id"`
+	Basics struct {
+		Ctime    int    `json:"ctime"`
+		Mtime    int    `json:"mtime"`
+		Salt     string `json:"salt"`
+		UID      string `json:"uid"`
+		Username string `json:"username"`
+	} `json:"basics"`
+	InvitationStats struct {
+		Available int `json:"available"`
+		Open      int `json:"open"`
+		Power     int `json:"power"`
+		Used      int `json:"used"`
+	} `json:"invitation_stats"`
+	Profile struct {
+		Bio      string `json:"bio"`
+		FullName string `json:"full_name"`
+		Location string `json:"location"`
+		Mtime    int    `json:"mtime"`
+	} `json:"profile"`
+	Emails struct {
+		Primary struct {
+			Email      string `json:"email"`
+			IsVerified int    `json:"is_verified"`
+		} `json:"primary"`
+	} `json:"emails"`
+	PublicKeys struct {
+		Primary struct {
+			KeyFingerprint string `json:"key_fingerprint"`
+			KID            string `json:"kid"`
+			KeyType        int    `json:"key_type"`
+			Bundle         string `json:"bundle"`
+			Ctime          int    `json:"ctime"`
+			Mtime          int    `json:"mtime"`
+		} `json:"primary"`
+	} `json:"public_keys"`
+	PrivateKeys struct {
+		Bundle  string `json:"bundle"`
+		KeyType int    `json:"key_type"`
+		KID     string `json:"kid"`
+		Ctime   int    `json:"ctime"`
+		Mtime   int    `json:"mtime"`
+	} `json:"private_keys"`
+	CryptoCurrencyAddress struct {
+		Bitcoin struct {
+			Address string `json:"address"`
+			SigID   string `json:"sig_id"`
+		} `json:"bitcoin"`
+	} `json:"cryptocurrency_addresses"`
 }
