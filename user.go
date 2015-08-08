@@ -31,6 +31,50 @@ func UserLookup(params UserLookupParams) (*UserLookupResponse, error) {
 	return r, err
 }
 
+// UserAutocompleteResponse contains a response to user/autocomplete requests.
+type UserAutocompleteResponse struct {
+	Status      status `json:"status"`
+	Completions []struct {
+		TotalScore float64 `json:"total_score"`
+		Components struct {
+			Username       acComponent `json:"username"`
+			KeyFingerprint struct {
+				acComponent
+				Algo  int `json:"algo"`
+				NBits int `json:"nbits"`
+			} `json:"key_fingerprint"`
+			FullName   acComponent `json:"full_name"`
+			Github     acComponent `json:"github"`
+			Reddit     acComponent `json:"reddit"`
+			Twitter    acComponent `json:"twitter"`
+			Coinbase   acComponent `json:"coinbase"`
+			Hackernews acComponent `json:"hackernews"`
+			Websites   []struct {
+				acComponent
+				Protocol string `json:"protocol"`
+			} `json:"websites"`
+		} `json:"components"`
+		UID        string `json:"uid"`
+		Thumbnail  string `json:"thumbnail"`
+		IsFollowee bool   `json:"is_followee"`
+	} `json:"completions"`
+}
+
+type acComponent struct {
+	Val   string  `json:"val"`
+	Score float64 `json:"score"`
+}
+
+// UserAutocomplete calls the user/autocomplete API endpoint.
+func UserAutocomplete(query string) (*UserAutocompleteResponse, error) {
+	r := new(UserAutocompleteResponse)
+	err := get("user/autocomplete", struct {
+		Query string `url:"q"`
+	}{query}, r)
+
+	return r, err
+}
+
 // UserDiscoverParams provides user/discover params.
 type UserDiscoverParams UserLookupParams
 
