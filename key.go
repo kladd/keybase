@@ -11,8 +11,10 @@ func KeyFetch(params KeyFetchParams) (*KeyFetchResponse, error) {
 // Key outlines the structure of a Key object in responses containing keys.
 type Key struct {
 	Bundle                 string `json:"bundle"`
+	UID                    string `json:"uid"`
+	Username               string `json:"username"`
 	KeyType                int    `json:"key_type"`
-	Kid                    string `json:"kid"`
+	KID                    string `json:"kid"`
 	PrimaryBundleInKeyring int    `json:"primary_bundle_in_keyring"`
 	Secret                 int    `json:"secret"`
 	SelfSignType           int    `json:"self_sign_type"`
