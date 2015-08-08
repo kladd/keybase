@@ -115,25 +115,21 @@ type profile struct {
 }
 
 type emails struct {
-	Primary email `json:"primary"`
-}
-
-type email struct {
-	Email      string `json:"email"`
-	IsVerified int    `json:"is_verified"`
+	Primary struct {
+		Email      string `json:"email"`
+		IsVerified int    `json:"is_verified"`
+	} `json:"primary"`
 }
 
 type publicKeys struct {
-	Primary publicKey `json:"primary"`
-}
-
-type publicKey struct {
-	KeyFingerprint string `json:"key_fingerprint"`
-	KID            string `json:"kid"`
-	KeyType        int    `json:"key_type"`
-	Bundle         string `json:"bundle"`
-	Ctime          int    `json:"ctime"`
-	Mtime          int    `json:"mtime"`
+	Primary struct {
+		KeyFingerprint string `json:"key_fingerprint"`
+		KID            string `json:"kid"`
+		KeyType        int    `json:"key_type"`
+		Bundle         string `json:"bundle"`
+		Ctime          int    `json:"ctime"`
+		Mtime          int    `json:"mtime"`
+	} `json:"primary"`
 }
 
 type privateKeys struct {
@@ -145,10 +141,8 @@ type privateKeys struct {
 }
 
 type cryptoCurrencyAddresses struct {
-	Bitcoin ccAddress `json:"bitcoin"`
-}
-
-type ccAddress struct {
-	Address string `json:"address"`
-	SigID   string `json:"sig_id"`
+	Bitcoin struct {
+		Address string `json:"address"`
+		SigID   string `json:"sig_id"`
+	} `json:"bitcoin"`
 }
