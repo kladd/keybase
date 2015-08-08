@@ -11,38 +11,12 @@ import (
 	"golang.org/x/crypto/scrypt"
 )
 
-// GetSaltParams define parameters for calls to the getsalt API endpoint.
-type GetSaltParams struct {
-	Username string `url:"email_or_username"`
-}
-
-// GetSaltResponse defines a response to a getsalt request.
-type GetSaltResponse struct {
-	Status       status `json:"status"`
-	Salt         string `json:"salt"`
-	CsrfToken    string `json:"csrf_token"`
-	LoginSession string `json:"login_session"`
-}
-
 // GetSalt calls the getsalt API endpoint.
 func GetSalt(params GetSaltParams) (GetSaltResponse, error) {
 	r := new(GetSaltResponse)
 	err := get("getsalt", params, r)
 
 	return *r, err
-}
-
-// LoginParams defines a request for a call to the login API endpoint.
-type LoginParams struct {
-	Username string
-	Salt     GetSaltResponse
-}
-
-// LoginResponse defines a response to a login request.
-type LoginResponse struct {
-	Status  status `json:"status"`
-	Session string `json:"session"`
-	Me      User   `json:"me"`
 }
 
 // Login encrypts password using a salt created with GetSalt() and transmits it
