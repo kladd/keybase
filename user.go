@@ -23,6 +23,62 @@ type UserLookupResponse struct {
 	Me     User   `json:"me,omitempty"`
 }
 
+// UserLookup wraps the user/lookup API endpoint.
+func UserLookup(params UserLookupParams) (*UserLookupResponse, error) {
+	r := new(UserLookupResponse)
+	err := get("user/lookup", params, r)
+
+	return r, err
+}
+
+// UserDiscoverParams provides user/discover params.
+type UserDiscoverParams UserLookupParams
+
+// UserDiscoverResponse contains a user/discover response.
+type UserDiscoverResponse struct {
+	Status  status `json:"status"`
+	Matches struct {
+		Twitter    [][]discoverAccount `json:"twitter"`
+		Github     [][]discoverAccount `json:"github"`
+		Hackernews [][]discoverAccount `json:"hackernews"`
+		Web        [][]discoverAccount `json:"web"`
+		Coinbase   [][]discoverAccount `json:"coinbase"`
+	} `json:"matches"`
+}
+
+type discoverAccount struct {
+	Thumbnail string `json:"thumbnail"`
+	Username  string `json:"username"`
+	PublicKey struct {
+		KeyFingerprint string `json:"key_fingerprint"`
+		Bits           int    `json:"bits"`
+		Algo           int    `json:"algo"`
+	} `json:"public_key"`
+	FullName     string `json:"full_name"`
+	CTime        int    `json:"ctime"`
+	RemoteProofs struct {
+		DNS            []string `json:"dns"`
+		GenericWebSite []struct {
+			Hostname   string `json:"hostname"`
+			Protocol   string `json:"protocol"`
+			Searchable string `json:"searchable"`
+		} `json:"generic_web_site"`
+		Twitter    string `json:"twitter"`
+		Github     string `json:"github"`
+		Reddit     string `json:"reddit"`
+		Hackernews string `json:"hackernews"`
+		Coinbase   string `json:"coinbase"`
+	} `json:"remote_proofs"`
+}
+
+// UserDiscover wraps the user/discover API endpoint.
+func UserDiscover(params UserDiscoverParams) (*UserDiscoverResponse, error) {
+	r := new(UserDiscoverResponse)
+	err := get("user/discover", params, r)
+
+	return r, err
+}
+
 // User is what the Keybase API defines as a "User Object".
 // Documentation is available at https://keybase.io/docs/api/1.0/user_objects.
 type User struct {
@@ -95,12 +151,4 @@ type cryptoCurrencyAddresses struct {
 type ccAddress struct {
 	Address string `json:"address"`
 	SigID   string `json:"sig_id"`
-}
-
-// UserLookup wraps the user/lookup API endpoint.
-func UserLookup(params UserLookupParams) (*UserLookupResponse, error) {
-	r := new(UserLookupResponse)
-	err := get("user/lookup", params, r)
-
-	return r, err
 }
