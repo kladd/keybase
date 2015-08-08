@@ -32,7 +32,7 @@ func main() {
 		// exactly as possible.
 		keybase.KeyFetchParams{
 			PGPKeyIDs: "comma,separated,list,of,key,ids",
-			Ops: keybase.OpEncrypt
+			Ops: keybase.OpEncrypt,
 		}
 	)
 
