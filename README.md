@@ -46,13 +46,9 @@ func main() {
 
 * getsalt
 * login
-
-
 * user/lookup
 * user/autocomplete
 * user/discover
-
-
 * key/fetch
 
 ## TODO
