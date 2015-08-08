@@ -34,11 +34,8 @@ func GetSalt(params GetSaltParams) (GetSaltResponse, error) {
 
 // LoginParams defines a request for a call to the login API endpoint.
 type LoginParams struct {
-	Username     string
-	HmacPwh      string
-	LoginSession string
-	CsrfToken    string
-	Salt         GetSaltResponse
+	Username string
+	Salt     GetSaltResponse
 }
 
 // LoginResponse defines a response to a login request.
