@@ -8,7 +8,7 @@ The Keybase API documentation is available [on their website](https://keybase.io
 
 ## Example
 
-> Note: See [Sessions](Sessions) section.
+> Note: See [Sessions](#sessions) section.
 
 ```go
 
