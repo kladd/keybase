@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"net/url"
 
 	"golang.org/x/crypto/scrypt"
 )
@@ -18,18 +17,18 @@ type GetSaltParams struct {
 
 // GetSaltResponse defines a response to a getsalt request.
 type GetSaltResponse struct {
-	Status       status `json:"status"`
-	Salt         string `json:"salt"`
-	CsrfToken    string `json:"csrf_token"`
-	LoginSession string `json:"login_session"`
+	Status       status `json:"status" url:"-"`
+	Salt         string `json:"salt" url:"-"`
+	CsrfToken    string `json:"csrf_token" url:"-"`
+	LoginSession string `json:"login_session" url:"login_session"`
 }
 
 // GetSalt calls the getsalt API endpoint.
-func GetSalt(params GetSaltParams) (GetSaltResponse, error) {
+func GetSalt(params GetSaltParams) (*GetSaltResponse, error) {
 	r := new(GetSaltResponse)
 	err := get("getsalt", params, r)
 
-	return *r, err
+	return r, err
 }
 
 // LoginResponse defines a response to a login request.
@@ -42,7 +41,8 @@ type LoginResponse struct {
 // LoginParams defines a request for a call to the login API endpoint.
 type LoginParams struct {
 	GetSaltParams
-	Salt GetSaltResponse
+	Salt    GetSaltResponse
+	hmacPwh string `url:"hmac_pwh"`
 }
 
 // Login encrypts password using a salt created with GetSalt() and transmits it
@@ -55,14 +55,10 @@ func Login(l LoginParams, password []byte) (*LoginResponse, error) {
 	hm := hmac.New(sha512.New, pwh[192:224])
 	hm.Write(ls)
 
-	v := url.Values{}
-	v.Set("hmac_pwh", fmt.Sprintf("%x", hm.Sum(nil)))
-	v.Set("email_or_username", l.Username)
-	v.Set("csrf_token", l.Salt.CsrfToken)
-	v.Set("login_session", l.Salt.LoginSession)
+	l.hmacPwh = fmt.Sprintf("%x", hm.Sum(nil))
 
 	r := new(LoginResponse)
-	post("login", v, r)
+	post("login", l, r)
 
 	session = r.Session
 

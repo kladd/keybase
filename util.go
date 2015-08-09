@@ -7,48 +7,9 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"reflect"
-	"strconv"
-	"strings"
+
+	"github.com/kladd/urlvalues"
 )
-
-func encodeParams(params interface{}) string {
-	v := reflect.ValueOf(params)
-	vals := url.Values{}
-	var value string
-
-	for i := 0; i < v.NumField(); i++ {
-		tag := v.Type().Field(i).Tag.Get("url")
-		var name string
-		var opts string
-
-		name = tag
-		if idx := strings.Index(tag, ","); idx != -1 {
-			name = tag[:idx]
-			opts = tag[idx+1:]
-		}
-
-		if name == "-" {
-			continue
-		}
-
-		switch v.Field(i).Type().Kind() {
-		case reflect.String:
-			value = v.Field(i).String()
-		case reflect.Int:
-			value = strconv.Itoa(int(v.Field(i).Int()))
-			fmt.Println(value)
-		}
-
-		if value == "" && strings.Contains(opts, "omitempty") {
-			continue
-		}
-
-		vals.Set(name, value)
-	}
-
-	return vals.Encode()
-}
 
 func client(urlStr string) *http.Client {
 	client := new(http.Client)
@@ -73,7 +34,11 @@ func client(urlStr string) *http.Client {
 }
 
 func get(method string, params interface{}, resp interface{}) error {
-	urlStr := fmt.Sprintf("%s/%s.json?%s", kbURL, method, encodeParams(params))
+	qs := make(url.Values)
+	encoder := urlvalues.NewEncoder()
+
+	err := encoder.Encode(params, qs)
+	urlStr := fmt.Sprintf("%s/%s.json?%s", kbURL, method, qs.Encode())
 
 	res, err := client(urlStr).Get(urlStr)
 	body, err := ioutil.ReadAll(res.Body)
@@ -84,10 +49,15 @@ func get(method string, params interface{}, resp interface{}) error {
 	return err
 }
 
-func post(method string, params url.Values, resp interface{}) error {
+func post(method string, params interface{}, resp interface{}) error {
+	qs := make(url.Values)
+	encoder := urlvalues.NewEncoder()
+
+	err := encoder.Encode(params, qs)
+
 	urlStr := fmt.Sprintf("%s/%s.json", kbURL, method)
 
-	res, err := client(urlStr).PostForm(urlStr, params)
+	res, err := client(urlStr).PostForm(urlStr, qs)
 	body, err := ioutil.ReadAll(res.Body)
 	defer res.Body.Close()
 
