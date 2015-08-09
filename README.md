@@ -13,17 +13,16 @@ The Keybase API documentation is available [on their website](https://keybase.io
 ```go
 
 var username string = "some_username"
-var passphrase []byte = []byte("some passphrase")
+var passphrase string = "some passphrase"
 
 func main() {
-	// Obtain a salt for the user
-	salt, _ := keybase.GetSalt(GetSaltParams{Username: username})
-
-	// Using the salt log the user in.
+	// Log a user in.
+	// This function will execute both stages of the 2 stage authentication
+	// process for keybase.
 	// API calls following this will be authenticated given the global state
 	// described in the note above.
 	// Login() returns a LoginResponse.
-	login, _ := keybase.Login(LoginParams{username,salt}, passphrase))
+	login, _ := keybase.Login(username, passphrase)
 
 	// Make some API call.
 	response, _ := keybase.KeyFetch(

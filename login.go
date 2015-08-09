@@ -11,21 +11,20 @@ import (
 )
 
 // GetSaltParams define parameters for calls to the getsalt API endpoint.
-type GetSaltParams struct {
+type getSaltParams struct {
 	Username string `url:"email_or_username"`
 }
 
 // GetSaltResponse defines a response to a getsalt request.
-type GetSaltResponse struct {
+type getSaltResponse struct {
 	Status       status `json:"status" url:"-"`
 	Salt         string `json:"salt" url:"-"`
 	CsrfToken    string `json:"csrf_token" url:"-"`
 	LoginSession string `json:"login_session" url:"login_session"`
 }
 
-// GetSalt calls the getsalt API endpoint.
-func GetSalt(params GetSaltParams) (*GetSaltResponse, error) {
-	r := new(GetSaltResponse)
+func getSalt(params getSaltParams) (*getSaltResponse, error) {
+	r := new(getSaltResponse)
 	err := get("getsalt", params, r)
 
 	return r, err
@@ -39,19 +38,24 @@ type LoginResponse struct {
 }
 
 // LoginParams defines a request for a call to the login API endpoint.
-type LoginParams struct {
-	GetSaltParams
-	Salt    GetSaltResponse
+type loginParams struct {
+	getSaltParams
+	Salt    getSaltResponse
 	hmacPwh string `url:"hmac_pwh"`
 }
 
 // Login encrypts password using a salt created with GetSalt() and transmits it
 // to keybase in exchange for a session.
-func Login(l LoginParams, password []byte) (*LoginResponse, error) {
+func Login(username string, password string) (*LoginResponse, error) {
+	gsp := getSaltParams{username}
+	gspr, err := getSalt(gsp)
+
+	l := loginParams{gsp, *gspr, ""}
+
 	salt, err := hex.DecodeString(l.Salt.Salt)
 	ls, err := base64.StdEncoding.DecodeString(l.Salt.LoginSession)
 
-	pwh, err := scrypt.Key(password, salt, 32768, 8, 1, 224)
+	pwh, err := scrypt.Key([]byte(password), salt, 32768, 8, 1, 224)
 	hm := hmac.New(sha512.New, pwh[192:224])
 	hm.Write(ls)
 
