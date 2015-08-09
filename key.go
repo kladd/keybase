@@ -1,5 +1,17 @@
 package keybase
 
+// KeyFetchParams defines params for the key/fetch API endpoint.
+type KeyFetchParams struct {
+	PGPKeyIDs string `url:"pgp_key_ids"`
+	Ops       int    `url:"ops"`
+}
+
+// KeyFetchResponse defines a response to a request to the key/fetch api
+type KeyFetchResponse struct {
+	Status status `json:"status"`
+	Keys   []Key  `json:"keys"`
+}
+
 // KeyFetch fetches keys using the key/fetch API endpoint.
 func KeyFetch(params KeyFetchParams) (*KeyFetchResponse, error) {
 	r := new(KeyFetchResponse)
