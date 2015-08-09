@@ -15,10 +15,10 @@ func client(urlStr string) *http.Client {
 	client := new(http.Client)
 
 	if session != "" {
-		jar, _ := cookiejar.New(nil)
+		client.Jar, _ = cookiejar.New(nil)
 		u, _ := url.Parse(urlStr)
 
-		jar.SetCookies(
+		client.Jar.SetCookies(
 			u,
 			append(
 				[]*http.Cookie(nil),
