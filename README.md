@@ -8,7 +8,7 @@ The Keybase API documentation is available [on their website](https://keybase.io
 
 ## Example
 
-> Note: the Login flow/usage will be changing soon. Currently the Keybase session is stored package-wide as a side effect of calling Login() successfully.
+> Note: See [Sessions](Sessions) section.
 
 ```go
 
@@ -40,6 +40,21 @@ func main() {
 }
 
 ```
+
+## Sessions
+
+Sessions are very hacky right now. First, on a successful call to the login API,
+the session is stored in a package-wide session variable. API calls made after
+Login() will be authenticated automatically.
+
+Keybase has a rate limit for calls to the login API. In order to avoid this rate
+limit I'm saving sessions to disk, and reusing them in later calls to Login().
+Sessions on disk can be destroyed with Session.Destroy().
+
+This is all very hacky, and mostly for testing while I develop this API client
+library. In the end, Login() will do nothing other than return its response with
+the session, and every auth protected API call will take a session as a parameter.
+Storing sessions to allow them to persist will be up to the user of the library.
 
 ## Methods implemented so far
 

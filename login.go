@@ -47,6 +47,10 @@ type loginParams struct {
 // Login encrypts password using a salt created with GetSalt() and transmits it
 // to keybase in exchange for a session.
 func Login(username string, password string) (*LoginResponse, error) {
+	if s := LoadSession(); s != "" {
+		return new(LoginResponse), nil
+	}
+
 	gsp := getSaltParams{username}
 	gspr, err := getSalt(gsp)
 
@@ -65,6 +69,7 @@ func Login(username string, password string) (*LoginResponse, error) {
 	post("login", l, r)
 
 	session = r.Session
+	session.Save()
 
 	return r, err
 }
