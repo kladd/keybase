@@ -14,7 +14,7 @@ const (
 )
 
 var (
-	session string
+	session Session
 )
 
 type status struct {

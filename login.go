@@ -32,9 +32,9 @@ func getSalt(params getSaltParams) (*getSaltResponse, error) {
 
 // LoginResponse defines a response to a login request.
 type LoginResponse struct {
-	Status  status `json:"status"`
-	Session string `json:"session"`
-	Me      User   `json:"me"`
+	Status  status  `json:"status"`
+	Session Session `json:"session"`
+	Me      User    `json:"me"`
 }
 
 // LoginParams defines a request for a call to the login API endpoint.

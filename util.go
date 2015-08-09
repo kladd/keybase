@@ -24,7 +24,7 @@ func client(urlStr string) *http.Client {
 				[]*http.Cookie(nil),
 				&http.Cookie{
 					Name:  "session",
-					Value: session,
+					Value: session.String(),
 				},
 			),
 		)
